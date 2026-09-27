@@ -1,3 +1,93 @@
+# AI Kullanım Notu
+
+**Araç:** Claude (Anthropic), Claude Code masaüstü uygulaması üzerinden.
+
+**Özet:** AI'ı kod, arayüz, analiz betiği, belgeler ve sunum için kullandım. Kapsamı ve kararları ben
+belirledim; ölçümleri kartta ben aldım. AI'ın her önerisini kartta, derlemede ya da ham veride
+gördüğüm sonuçla kontrol ettim.
+
+## Hangi işlerde destek aldım?
+
+- **Proje iskeleti:** Dizin yapısı, IAR projesi (IAR 9.70.4'ün ürettiği boş projeden türetildi),
+  FreeRTOS-Kernel'in git alt modülü olarak eklenmesi, `FreeRTOSConfig.h` ve CMSIS dosyalarının
+  seçilmesi.
+- **Firmware:**
+  - Register seviyesi sürücüler: RCC, GPIO, EXTI, TIM2, USART2, ADC.
+  - Üç görev, kuyruklar, buton ISR'si ve sıçrama filtresi.
+  - Kayıt havuzu, UART TC tabanlı t₄ ölçümü, ASCII 64 baytlık mesaj kodlayıcısı.
+  - Arayüzden senaryo seçme komutu, kart sıcaklığı telemetrisi.
+- **Web Serial arayüzü:** Canlı TEL/BTN gösterimi, senaryo paneli, gecikme dağılımı paneli, ölçüm
+  sonu döküm, CSV kaydı, kayıp ve bütünlük sayaçları.
+- **Analiz:** `analyze.py` betiği; ölçüm verisindeki tutarsızlıkların taranması.
+- **Belgeler:** README, `setup.md`, `code-notes.md` ve `report.md` (tablolar ve yorum benim ölçüm
+  verimden dolduruldu).
+- **Açıklama:** Sistemi, S5'teki birikimi, UART TC ile t₄ ölçümünü ve FreeRTOS ayarlarını bana kod
+  üzerinden anlatması.
+- **Sunum:** İskeletini benim verdiğim PowerPoint sunumu ve slayt slayt konuşma metni.
+
+## AI'ı nasıl yönlendirdim?
+
+1. **Kapsamı ben belirledim.** İlk mesajda kartı (STM32F407VG Discovery), üç görevi ve önceliklerini,
+   t₀–t₄ ölçüm noktalarını, UART ve mesaj biçimini, S0–S5 senaryolarını, dizin yapısını ve arayüzden
+   beklentilerimi verdim. "Önce temeli kuralım, eklenecekleri sonra söyleyeceğim" diyerek işi adım
+   adım ilerlettim.
+
+2. **İçerik kararlarını ben verdim.** Telemetri verisinin ne olduğunu sordum ve kartın sıcaklığı
+   olmasını istedim.
+
+3. **Kartta gördüğümü geri bildirdim.** İlk S0 denemesinde bir basışta iki olay geldiğini (basma ve
+   bırakma) ve telemetrinin gelmediğini ekran görüntüsüyle bildirdim. "1 basışta 1 okuma olması
+   gerekmez mi?" sorum buton filtresinin düzeltilmesine yol açtı.
+
+4. **Kendi tasarım önerilerimi getirdim.** Ders slaytlarındaki iki yöntemi önerdim:
+
+   - Buton ISR'si tasarımı: yalnızca basış kenarı, son kabulden 30 ms, sayaçlar, kuyruk kurulum
+     sırası.
+   - Slayt 04'teki ölçüm kaydı yöntemi: sonuçları kayıt havuzunda tutmak.
+
+   Her ikisinde de AI'dan önce değerlendirme istedim, neyin kalıp neyin değişeceğini gerekçesiyle
+   dinledim, sonra onay verdim ("evet devam edelim", "olur").
+
+5. **Arayüz isteklerini ben tanımladım.**
+
+   - Gecikme hesabının slayttaki gibi aşamalara bölünerek gösterilmesi.
+   - Senaryoların (S0–S5) yeniden derlemeden arayüzden seçilebilmesi.
+
+6. **Şartnameye göre denetlettim.** Şartname dosyasını (`odev-01.html`) verip ne kadarının
+   karşılandığını sordum. Eksikleri giderirken kapsamı "sadece yazılımsal eksikleri giderelim" diye
+   sınırladım.
+
+7. **Ne zaman kod değişeceğini ben kontrol ettim.** Anlamak istediğim yerlerde "kodda değişiklik
+   yapma", "sadece öğret", "sadece cevap ver" diyerek AI'ın dosyalara dokunmasını engelledim:
+
+   - sistemin baştan sona anlatımı ve görsel ağaç,
+   - UART TC ve t₄ ölçümünün kod üzerinde anlatımı,
+   - `configMAX_PRIORITIES`'in nerede olduğu,
+   - kodun event-driven olup olmadığı.
+
+   Bir kez de web'den araştırmaya başlamasını durdurup doğrudan cevap istedim.
+
+8. **Veriyi denetlettim ve gerekince yeniden ölçtüm.** "Bir gariplik var mı?" diye ham veriyi
+   kontrol ettirdim. Çıkan üç sorun:
+
+   - S1'de 29 olay (en az 30 gerekiyordu),
+   - basışlar arasının 0,5 s'den kısa olması,
+   - CSV'deki `tx_drop` durum adının şartnamedeki `drop` ile uyuşmaması.
+
+   Durum adını düzelttirdim ve altı senaryoyu şartnamedeki prosedürle yeniden ölçtüm.
+
+9. **Anlamadığım yeri sordum.** S5'te R'nin neden sürekli artıp bir yerde sabitlendiğini ve
+   sonuçların neden basış anında değil ölçüm sonunda geldiğini sordum. Bunları sunumda kendim
+   anlatabilmek için açıklattım.
+
+10. **Sunumun iskeletini ben verdim.** A1–A25 ve E1–E16 başlıklarıyla iskeleti ben verdim, AI slaytları
+    ve konuşma metnini hazırladı. AI iskeletteki sayısal iddiaları ölçüm verisiyle karşılaştırdı;
+    uymayan bir ifadeyi bana bildirip düzeltti (aşağıda).
+
+11. **Teslimi ben yönettim.** Eksik listesini çıkarttım, rapor ve kurulum belgesini doldurttum.
+    Commit ve GitHub'a yükleme benim onayımla yapılır.
+
+## Üretilen kodu nasıl kontrol ettim?
 
 - **Derleme:**
   - Firmware IAR 9.70.4 ile derlendi, uyarılar sıfırlandı.
