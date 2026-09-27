@@ -1,4 +1,4 @@
-# Hafta 01 — Yük Altında Buton Yanıt Süresi Analizi (STM32F407VG + FreeRTOS)
+# Yük Altında Buton Yanıt Süresi Analizi (STM32F407VG + FreeRTOS)
 
 Bu proje, STM32F407VG Discovery kartı üzerinde FreeRTOS ile çalışan 3 görevli bir
 sistemde, artan telemetri yükü ve ek CPU işi altında **buton-tepki gecikmesinin**
