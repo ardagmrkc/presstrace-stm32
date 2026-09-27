@@ -1,0 +1,15 @@
+C:\iar\ewarm-9.70.4\arm\bin\armproc.dll
+
+ C:\iar\ewarm-9.70.4\arm\bin\armstlink.dll
+
+ C:\Users\CANAVAR\Documents\KAYNAK\erhan_konak_bootcamp\odev_1\freertos-bootcamp\hafta-01\firmware\EWARM\Debug\Exe\odev_1.out
+
+ --plugin=C:\iar\ewarm-9.70.4\arm\bin\armLibSupportUniversal.dll
+
+ --device_macro=C:\iar\ewarm-9.70.4\arm/config/debugger/ST/STM32F4xx.dmac
+
+ --flash_loader=C:\iar\ewarm-9.70.4\arm/config/flashloader/ST/FlashSTM32F4xxx.board
+
+ 
+
+

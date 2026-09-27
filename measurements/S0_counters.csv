@@ -1,0 +1,17 @@
+name,value
+accepted,30
+repeat,21
+btn_queue_drop,0
+tx_queue_drop,0
+tx_queue_max,1
+pool_overflow,0
+droplog_overflow,0
+tx_timeout,0
+tx_start_fail,0
+spurious_tc,0
+encode_error,0
+tel_sent,0
+host_rec_received,30
+host_rec_expected,30
+host_seq_gaps,0
+host_line_errors,0
